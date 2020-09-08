@@ -1,4 +1,4 @@
-# Reporting tool project (2020 internship) based on Shiny Dashboard for paediatric emergencies
+# Reporting tool project (2020 internship) based on Shiny Dashboard for paediatric emergencies.
 
 Two main part:
 - How to deploy a Shiny app: shiny server, online, local...
