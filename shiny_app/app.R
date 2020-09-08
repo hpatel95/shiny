@@ -16,7 +16,8 @@ library(tidyr)
 ############################################################################
 
 #DF PRINCIPALE
-test_DF <- read.csv2("C:/Users/Haris/Desktop/stages_janvier_fevrier_2020/hal_data.csv") #entrer ici le chemin d'acces de la base de donne hal_data
+path_import = "raw_df_path" #entrer ici le chemin d'acces de la base de donne d'interet
+raw_DF <- read.csv2(path_import) 
 
 #Creation df pour Spider chart
 spider <- as.data.frame(matrix( sample( 2:20 , 5 , replace=T) , ncol=5))
@@ -108,13 +109,13 @@ ui <- navbarPage("TEST OPTIM - Mai 2020 - HP", theme = shinytheme("darkly"),   #
 server <- function(input, output, session) {
     
     ##################### TRAVAIL DF (plot nbre patients)
-    pbarre <- test_DF %>% 
+    pbarre <- raw_DF %>% 
         group_by (annee) %>% 
         summarise(moyenne_age = mean(age, na.rm = TRUE)) #(na.rm Pas compter les NAs)
     #####################
     
     ##################### TRAVAIL DF (plot exam prescrit et tension)
-    test_DF <- test_DF %>% 
+    raw_DF <- raw_DF %>% 
         replace_na(list(nb_dese_anesth=0,
                         moy_dese_anesth=0,
                         nb_seve_anesth=0,
@@ -122,18 +123,18 @@ server <- function(input, output, session) {
     
     ### B. Creer variable desflurane, = 0 ou = 1.
     
-    test_DF<-test_DF %>%
+    raw_DF<-raw_DF %>%
         mutate(desflurane = ifelse(nb_dese_anesth >= 10 & moy_dese_anesth >= 3.5, 1, 0))
     
     
     ### C. Creer variable sevoflurane, = 0 ou = 1.
     
-    test_DF<-test_DF %>%
+    raw_DF<-raw_DF %>%
         mutate(sevoflurane = ifelse(nb_seve_anesth >= 10 & moy_seve_anesth >= 0.8, 1, 0))
     
     #### D. Creation dataframe moyenne desflurane/sevoflurane/annee
     
-    moyenne_desf_sev_par_annee <- test_DF %>% 
+    moyenne_desf_sev_par_annee <- raw_DF %>% 
         select(annee , desflurane, sevoflurane) %>% 
         group_by(annee) %>%
         summarize(moyenne_desf = mean(desflurane , na.rm = TRUE) ,
